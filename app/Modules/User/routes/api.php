@@ -21,4 +21,5 @@ Route::prefix('v1')->group(function () {
     // ->whereNumber(['posts' => 'postId']);
 
     Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('get-posts-by-categories', [PostController::class, 'getPostsByCategories']);
 });
