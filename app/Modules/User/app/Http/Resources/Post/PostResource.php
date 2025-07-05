@@ -24,7 +24,7 @@ class PostResource extends BaseResource
                     'name' => $tag->name,
                 ];
             }),
-            'image_url' => $this->image_url,
+            'image_url' => file_url($this->image_url),
             'created_at' => $this->created_at,
         ];
     }

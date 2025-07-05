@@ -33,9 +33,4 @@ class Post extends Model
     {
         return $this->is_active;
     }
-
-    public function getImageUrlAttribute()
-    {
-        return $this->image_url ? file_url($this->image_url) : null;
-    }
 }
