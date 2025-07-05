@@ -85,7 +85,7 @@ jobs:
           done < params.txt
 
           # Clean up
-          rm params.txt
+          # rm params.txt
           echo "Environment variables updated successfully"
 
           echo "=== DISPLAYING .ENV FILE (MASKED) ==="
