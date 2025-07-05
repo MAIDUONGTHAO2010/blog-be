@@ -6,11 +6,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "bensampo/laravel-enum": "^6.7",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "bensampo/laravel-enum": "^6.7",
+        "league/flysystem-aws-s3-v3": "^3.29",
         "nwidart/laravel-modules": "^10.0",
         "prettus/l5-repository": "^2.9"
     },
@@ -35,7 +36,10 @@
             "Modules\\User\\App\\": "app/Modules/User/app/",
             "Modules\\User\\Database\\Factories\\": "app/Modules/User/database/factories/",
             "Modules\\User\\Database\\Seeders\\": "app/Modules/User/database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

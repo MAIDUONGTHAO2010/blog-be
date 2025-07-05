@@ -32,7 +32,7 @@ jobs:
         ssh -i ${{ secrets.SSH_KEY_NAME }} -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           echo "Connected to EC2 instance"
           echo "Current directory: $(pwd)"
-          
+
           echo "Going to project directory: ${{ secrets.PROJECT_PATH }}"
           cd ${{ secrets.PROJECT_PATH }}
           echo "Now in directory: $(pwd)"
@@ -44,14 +44,14 @@ jobs:
 
           echo "=== START DOCKER ==="
           sudo service docker start || true
-          
+
           echo "=== STOPPING DOCKER CONTAINERS ==="
           docker-compose down || true
           docker system prune -f || true
-          
+
           echo "=== CREATING .ENV FILE ==="
           cp .env.example .env
-          
+
           echo "=== FETCHING AWS PARAMETERS ==="
           # Define parameter paths
           PARAM_PREFIX="/blog-app"
@@ -68,10 +68,10 @@ jobs:
           while IFS=$'\t' read -r name value; do
             # Extract the key name from the parameter path
             key=$(echo "$name" | sed "s|^$PARAM_PREFIX/||")
-            
+
             # Escape special characters in value for sed
             escaped_value=$(echo "$value" | sed 's/[[\.*^$()+?{|]/\\&/g')
-            
+
             # Update the .env file
             if grep -q "^${key}=" .env; then
               # Key exists, update it
@@ -87,46 +87,46 @@ jobs:
           # Clean up
           rm params.txt
           echo "Environment variables updated successfully"
-          
+
           echo "=== DISPLAYING .ENV FILE (MASKED) ==="
           echo "Current .env file contents (sensitive values masked):"
           sed 's/=.*/=***/' .env
-          
+
           echo "=== STARTING DOCKER CONTAINERS ==="
           docker-compose -f docker-compose-deploy.yml up -d
-          
+
           echo "=== WAITING FOR CONTAINERS ==="
           sleep 30
           docker-compose ps
-          
+
           echo "=== INSTALLING COMPOSER DEPENDENCIES ==="
           docker-compose exec -T blog_be_app composer install --no-dev --optimize-autoloader
-          
+
           echo "=== GENERATING APPLICATION KEY ==="
           docker-compose exec -T blog_be_app php artisan key:generate --force
-          
+
           echo "=== DUMPING AUTOLOAD ==="
           docker-compose exec -T blog_be_app composer dump-autoload --optimize
-          
+
           echo "=== RUNNING DATABASE MIGRATIONS ==="
           docker-compose exec -T blog_be_app php artisan migrate --force
-          
-          echo "=== RUNNING DATABASE SEEDINGS ==="
-          docker-compose exec -T blog_be_app php artisan db:seed --force
-          
+
+          # echo "=== RUNNING DATABASE SEEDINGS ==="
+          # docker-compose exec -T blog_be_app php artisan db:seed --force
+
           echo "=== CLEARING AND CACHING CONFIG ==="
           docker-compose exec -T blog_be_app php artisan optimize:clear
-          
+
           echo "=== PERFORMING HEALTH CHECK ==="
           sleep 10
-          
+
           # Health check
           max_attempts=5
           attempt=1
 
           while [ $attempt -le $max_attempts ]; do
             echo "Health check attempt $attempt..."
-            
+
             if curl -f http://localhost:${APP_PORT:-80}/health || curl -f http://localhost:${APP_PORT:-80}; then
               echo "Application is healthy!"
               break
@@ -141,13 +141,13 @@ jobs:
               ((attempt++))
             fi
           done
-          
+
           echo "=== FINAL CONTAINER STATUS ==="
           docker-compose ps
-          
+
           echo "=== APPLICATION LOGS ==="
           docker-compose logs --tail=10 blog_be_app
-          
+
           echo "=== DEPLOYMENT COMPLETED SUCCESSFULLY ==="
         EOF
 

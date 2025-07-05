@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\User\App\Http\Controllers\CategoryController;
 use Modules\User\App\Http\Controllers\PostController;
+use Modules\User\App\Http\Controllers\PresignedUrlController;
 
 /*
     |--------------------------------------------------------------------------
@@ -22,4 +23,6 @@ Route::prefix('v1')->group(function () {
 
     Route::get('categories', [CategoryController::class, 'index']);
     Route::get('get-posts-by-categories', [PostController::class, 'getPostsByCategories']);
+    Route::get('presigned-url', [PresignedUrlController::class, 'generate']);
+
 });
