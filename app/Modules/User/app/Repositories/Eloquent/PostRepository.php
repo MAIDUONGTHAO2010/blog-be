@@ -42,6 +42,21 @@ class PostRepository extends BaseRepository implements PostRepositoryInterface
 
     public function getPostsByCategories(): Collection
     {
+        return $this->model
+            ->newQuery()
+            ->with([
+                'category' => function ($query) {
+                    $query->select(['id', 'name']);
+                },
+                'tags' => function ($query) {
+                    $query->select(['tags.id', 'name']);
+                },
+            ])
+            ->whereNotNull('created_at')
+            ->orderBy('created_at', 'desc')
+            ->limit(6)
+            ->get();
+
         $baseQuery = $this->model
             ->newQuery()
             ->select(
